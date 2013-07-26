@@ -1,0 +1,21 @@
+
+%h1 Your Pragmatic Catalog
+
+- @products.each do | product |
+  .entry.hero-unit
+   
+    %h3 
+      = product.title
+   
+    %p
+      = image_tag(product.image_url)
+      =sanitize(product.description)
+   
+    .price_line
+      %span.price
+        %strong 
+          Цена:
+        = number_to_currency(product.price, unit: "UA", format: "%n %u")
+      
+      /= button_to 'Add to Cart', line_items_path(product_id: product), :class => "btn btn-primary "
+        
