@@ -1,0 +1,19 @@
+%h1 listing products
+%table.table-bordered.table-striped.w
+  - @products.each do |product|
+    %tr{:class => cycle('list_line_odd', 'list_line_even')}
+      %td
+        = image_tag(product.image_url, class: 'list_image')
+      %td.list_description
+        %dl
+          %dt= product.title
+          %dd= truncate(strip_tags(product.description), lenght: 80)
+      %td.list_actions
+        = link_to 'Show', product, :class => " btn btn-info btn-small"
+        %br/
+        = link_to 'Edit', edit_product_path(product), :class => "btn btn-warning btn-small"
+        %br/
+        = link_to 'Destroy', product,:class => "btn btn-danger btn-small", confirm:'Are you sure ?', method: :delete
+        %br/
+%br.clearfix/
+= link_to 'New product', new_product_path
