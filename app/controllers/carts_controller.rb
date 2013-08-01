@@ -1,5 +1,5 @@
 class CartsController < ApplicationController
-  before_action :set_cart, only: [:show, :edit, :update, :destroy]
+  before_action :set_cart, only: [:edit, :update, :destroy]
 
   # GET /carts
   # GET /carts.json
@@ -10,6 +10,18 @@ class CartsController < ApplicationController
   # GET /carts/1
   # GET /carts/1.json
   def show
+    begin
+      set_cart
+      set_cart = @cart
+    rescue ActiveRecord::RecordNotFound
+      logger.error "Попытка доступа к несуществующей корзине #{params[:id]}" 
+      redirect_to store_url, notice: 'Несуществующая корзина'
+    else
+      respond_to do | format |
+        format.html #show.html.haml
+        format.json { render json:set_cart}
+      end
+    end
   end
 
   # GET /carts/new
@@ -54,10 +66,13 @@ class CartsController < ApplicationController
   # DELETE /carts/1
   # DELETE /carts/1.json
   def destroy
+    @cart = current_cart
     @cart.destroy
+    session[:cart_id] = nil
     respond_to do |format|
-      format.html { redirect_to carts_url }
-      format.json { head :no_content }
+      format.html { redirect_to store_url }
+      format.js
+      format.json { head :ok }
     end
   end
 

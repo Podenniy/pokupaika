@@ -1,0 +1,12 @@
+- unless cart.line_items.empty?
+  %table.table-bordered.table-condensed.show_cart.mrg#show
+    %caption Your Cart 
+    = render(cart.line_items)
+  
+    %tr
+      %td{:colspan => "2"}
+        Total
+      %td
+        = number_to_currency(cart.total_price)
+    
+  = button_to 'Empty cart', cart, :class => 'btn btn-mini btn-danger', remote: true, method: :delete, data: {confirm:'Your sure?'} 

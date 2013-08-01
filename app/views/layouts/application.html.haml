@@ -27,7 +27,7 @@
             %span.icon-bar
             %span.icon-bar
           %a.brand 
-            = image_tag("logo.png")
+            //= image_tag("logo.png")
             =@page_title || "Pragramatic Productshelf"
 
           .container.nav-collapse
@@ -39,11 +39,15 @@
     .container
 
       .row
-        .span9
+        .span8.store
           = bootstrap_flash
           = yield
-        .span3
+        .span3.offset1
+          
+            
           .well.sidebar-nav
+            = hidden_div_if(@cart.line_items.empty?, id: 'cart') do
+              = render @cart
             %h3 Sidebar
             %ul.nav.nav-list
               %li.nav-header Sidebar

@@ -27,12 +27,14 @@ class LineItemsController < ApplicationController
     #@line_item = LineItem.new(line_item_params)
     @cart = current_cart
     product = Product.find(params[:product_id])
-    @line_item = @cart.line_items.build(product: product)
+    @line_item = @cart.add_product(product.id)
+    session[:counter] = nil
     respond_to do |format|
       if @line_item.save
-        session[:counter] = nil
-        format.html { redirect_to @line_item.cart, notice: 'Line item was successfully created.'}
+        format.html { redirect_to store_url}
+        format.js {@current_item = @line_item}
         format.json { render json: @line_item, status: :created, location: @line_item }
+        session[:counter] = nil
       else
         format.html { render action: 'new' }
         format.json { render json: @line_item.errors, status: :unprocessable_entity }
@@ -57,13 +59,40 @@ class LineItemsController < ApplicationController
   # DELETE /line_items/1
   # DELETE /line_items/1.json
   def destroy
-    @line_item.destroy
+     if @line_item.quantity >1
+       @line_item.update_attributes(:quantity => @line_item.quantity - 1)
+     else
+       @line_item.destroy
+     end
+
     respond_to do |format|
-      format.html { redirect_to line_items_url }
-      format.json { head :no_content }
+        format.html { redirect_to store_url }
+        format.json { head :ok }
     end
   end
 
+  def decrement
+    @cart = current_cart
+
+    # 1st way: decrement through method in @cart
+    @line_item = @cart.decrease(set_line_item) # passing in line_item.id
+
+    # 2nd way: decrement through method in @line_item
+    #@line_item = @cart.line_items.find_by_id(params[:id])
+    #@line_item = @line_item.decrement_quantity(@line_item.id)
+
+    respond_to do |format|
+      if @line_item.save
+        format.html { redirect_to store_path, notice: 'Line item was successfully updated.' }
+        format.js {@current_item = @line_item}
+        format.json { head :ok }
+      else
+        format.html { render action: "edit" }
+        format.js {@current_item = @line_item}
+        format.json { render json: @line_item.errors, status: :unprocessable_entity }
+      end
+    end
+  end
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_line_item

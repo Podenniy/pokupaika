@@ -1,0 +1,12 @@
+- if line_item == @current_item
+  %tr#current_item
+-else
+%tr.total
+  %td.quantity_line
+    #{line_item.quantity} &times
+  %td.title_line
+    = line_item.product.title
+  %td.item_price
+    = number_to_currency(line_item.total_price)
+  %td 
+    = button_to 'Remove', decrement_line_item_path(line_item), :class => 'btn btn-mini btn-warning', :method => :put, remote: true

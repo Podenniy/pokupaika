@@ -1,6 +1,10 @@
 Pokupaika::Application.routes.draw do
-  resources :line_items
-
+   resources :line_items do
+    #member do
+    #  put 'decrement'
+    #end
+    put 'decrement', on: :member
+   end
   resources :carts
 
   get "store/index"

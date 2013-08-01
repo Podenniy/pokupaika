@@ -3,5 +3,6 @@ class StoreController < ApplicationController
   	@products = Product.order(:title)
   	@time = Time.now
   	@count = increment_counter
+  	@cart = current_cart
   end
 end
